@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ZadaGPT</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+
+background:
+linear-gradient(rgba(0,0,0,0.75),rgba(0,0,0,0.85)),
+url("https://images.unsplash.com/photo-1446776811953-b23d57bd21aa");
+
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+
+display:flex;
+justify-content:center;
+align-items:flex-start;
+padding:40px;
+gap:30px;
+flex-wrap:wrap;
+color:white;
+min-height:100vh;
+
+animation:fadeBody 1.5s ease;
+}
+
+@keyframes fadeBody{
+from{opacity:0;}
+to{opacity:1;}
+}
+
+h1{
+width:100%;
+text-align:center;
+font-weight:600;
+letter-spacing:2px;
+margin-bottom:10px;
+animation:fadeUp 1s ease;
+}
+
+.card{
+
+background:rgba(20,20,20,0.75);
+backdrop-filter:blur(10px);
+
+border-radius:16px;
+padding:20px;
+
+box-shadow:
+0 0 25px rgba(0,0,0,0.6),
+0 0 5px rgba(255,255,255,0.05);
+
+width:350px;
+
+animation:fadeUp 1.2s ease;
+
+}
+
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+#chat-box{
+
+height:300px;
+overflow-y:auto;
+
+border-radius:10px;
+
+padding:10px;
+margin-bottom:10px;
+
+display:flex;
+flex-direction:column;
+gap:8px;
+
+background:rgba(0,0,0,0.45);
+
+}
+
+.msg{
+
+padding:9px 12px;
+border-radius:10px;
+max-width:80%;
+font-size:14px;
+line-height:1.4;
+word-wrap:break-word;
+
+animation:fadeMsg .4s ease;
+
+}
+
+@keyframes fadeMsg{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.user{
+
+align-self:flex-end;
+
+background:linear-gradient(135deg,#0084ff,#00c6ff);
+
+color:white;
+
+border-bottom-right-radius:2px;
+
+}
+
+.bot{
+
+align-self:flex-start;
+
+background:#e4e6eb;
+
+color:#222;
+
+border-bottom-left-radius:2px;
+
+}
+
+.error{
+
+align-self:center;
+
+background:#ffebee;
+
+color:#c62828;
+
+border:1px solid #ffcdd2;
+
+max-width:95%;
+
+text-align:center;
+
+}
+
+.input-area{
+
+display:flex;
+gap:6px;
+
+}
+
+.input-area input{
+
+flex:1;
+
+padding:10px;
+
+border-radius:6px;
+
+border:none;
+
+outline:none;
+
+background:#111;
+
+color:white;
+
+}
+
+.input-area button{
+
+padding:10px 15px;
+
+border:none;
+
+border-radius:6px;
+
+cursor:pointer;
+
+background:linear-gradient(135deg,#007bff,#00d4ff);
+
+color:white;
+
+transition:.2s;
+
+}
+
+.input-area button:hover{
+
+transform:scale(1.05);
+
+}
+
+#display{
+
+width:100%;
+
+height:40px;
+
+text-align:right;
+
+margin-bottom:10px;
+
+font-size:20px;
+
+padding:5px;
+
+border-radius:6px;
+
+border:none;
+
+background:#111;
+
+color:white;
+
+}
+
+.grid{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:6px;
+
+}
+
+.grid button{
+
+padding:15px;
+
+border:none;
+
+border-radius:6px;
+
+cursor:pointer;
+
+background:#1b1b1b;
+
+font-size:16px;
+
+color:white;
+
+transition:.2s;
+
+}
+
+.grid button:hover{
+
+background:#333;
+
+}
+
+.op{
+
+background:#ff9800 !important;
+
+color:white !important;
+
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>ZadaGPT loh ya</h1>
+
+<div class="card">
+
+<h3 style="margin-top:0;">🌏 Zada AI</h3>
+
+<div id="chat-box">
+<div class="msg bot">Ketik lu mau ngomong apa, jangan rumit rumit</div>
+<div class=""></div>
+</div>
+
+<div class="input-area">
+
+<input
+type="text"
+id="user-input"
+placeholder="Mau nanya apa deck?..."
+onkeypress="if(event.key === 'Enter') askAI()">
+
+<button onclick="askAI()">Kirim</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3 style="margin-top:0;">🧮 Kalkulator</h3>
+
+<input type="text" id="display" readonly>
+
+<div class="grid">
+
+<button onclick="clearC()" style="grid-column: span 2; background:#f44336;">C</button>
+
+<button class="op" onclick="add('/')">/</button>
+<button class="op" onclick="add('*')">x</button>
+
+<button onclick="add('7')">7</button>
+<button onclick="add('8')">8</button>
+<button onclick="add('9')">9</button>
+<button class="op" onclick="add('-')">-</button>
+
+<button onclick="add('4')">4</button>
+<button onclick="add('5')">5</button>
+<button onclick="add('6')">6</button>
+<button class="op" onclick="add('+')">+</button>
+
+<button onclick="add('1')">1</button>
+<button onclick="add('2')">2</button>
+<button onclick="add('3')">3</button>
+
+<button class="op" onclick="hitung()" style="grid-row: span 2">=</button>
+
+<button onclick="add('0')" style="grid-column: span 2">0</button>
+<button onclick="add('.')">.</button>
+
+</div>
+
+</div>
+
+<script>
+
+const API_KEY = "AIzaSyAsVcXiLRu2nbnV0w_50aNNUhXJo29VCwM";
+
+async function askAI(){
+
+const inputField=document.getElementById('user-input');
+const chatBox=document.getElementById('chat-box');
+
+const prompt=inputField.value.trim();
+
+if(!prompt)return;
+
+chatBox.innerHTML+=`<div class="msg user">${prompt}</div>`;
+
+inputField.value='';
+
+const loadingId="loading-"+Date.now();
+
+chatBox.innerHTML+=`<div class="msg bot" id="${loadingId}">⏳ Gw mikir dulu cik😹...</div>`;
+
+chatBox.scrollTop=chatBox.scrollHeight;
+
+try{
+
+const response=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${API_KEY}`,{
+
+method:"POST",
+
+headers:{"Content-Type":"application/json"},
+
+body:JSON.stringify({
+contents:[{parts:[{text:prompt}]}]
+})
+
+});
+
+const data=await response.json();
+
+if(!response.ok){
+
+document.getElementById(loadingId).className="msg error";
+
+document.getElementById(loadingId).innerHTML=`<b>Pesan Server Google:</b><br>${data.error.message}`;
+
+return;
+
+}
+
+const aiText=data.candidates[0].content.parts[0].text;
+
+document.getElementById(loadingId).innerHTML=aiText.replace(/\n/g,'<br>');
+
+}
+
+catch(err){
+
+document.getElementById(loadingId).className="msg error";
+
+document.getElementById(loadingId).innerHTML="<b>Gagal bre!</b>Liat dulu internet lu<br>.";
+
+}
+
+chatBox.scrollTop=chatBox.scrollHeight;
+
+}
+
+const d=document.getElementById('display');
+
+function add(v){d.value+=v;}
+
+function clearC(){d.value='';}
+
+function hitung(){
+
+try{
+
+d.value=eval(d.value)||'';
+
+}
+
+catch{
+
+d.value='Error';
+
+setTimeout(clearC,1000);
+
+}
+
+}
+
+</script>
+<p>©Terimakasih sudah berkunjung, jangan lupa subscribe Tiktok dan YouTube saya</p>
+<a href=https://www.tiktok.com/@ishigami_martin?_r=1&_t=ZS-94TjEp5plCO>Follow Tiktok</a>
+<a href=https://youtube.com/@zadz_channel?si=B2DDhhn8vE-m5P05>Subscribe YouTube juga dong</a>
+</body>
+  </html>
